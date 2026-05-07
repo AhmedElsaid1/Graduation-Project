@@ -73,15 +73,29 @@ class GeminiProvider(LLMInterface):
             self.construct_prompt(prompt=prompt, role=LLMMessageRole.USER.value)
         )
 
-        response = self.client.invoke(final_chat_history)
+        # response = self.client.invoke(final_chat_history)
 
-        self.switch_api_key()
+        # self.switch_api_key()
 
-        if not response.content:
-            self.logger.error("Error while generating text with Gemini")
-            return None
+        # if not response.content:
+        #     self.logger.error("Error while generating text with Gemini")
+        #     return None
 
-        return response.content
+        # return response.content
+        for _ in range(len(self.api_keys)):
+            try:
+                response = self.client.invoke(final_chat_history)
+
+                if response.content:
+                    self.switch_api_key()
+                    return response.content
+
+            except Exception as e:
+                self.logger.warning(f"Gemini API failed: {e}")
+                self.switch_api_key()
+
+        self.logger.error("All Gemini API keys failed")
+        return None
 
 
     def construct_prompt(self, prompt: str, role: str):

@@ -11,7 +11,8 @@ import re
 # Token budget reserved specifically for quiz generation.
 # 25 questions × ~350 tokens each (question + options + explanation) ≈ 8 750 tokens.
 # Keep well above that ceiling so no response is truncated.
-QUIZ_MAX_TOKENS = 16000
+QUIZ_MAX_TOKENS = 3072
+# 16000
 
 
 class QuizController(BaseController):
@@ -226,6 +227,7 @@ Return ONLY a valid JSON array with this exact structure (no markdown, no extra 
             max_tokens=QUIZ_MAX_TOKENS,
             temperature=0.7
         )
+        
 
         if not result or not result.questions:
             self.logger.error("Structured output returned no questions")
